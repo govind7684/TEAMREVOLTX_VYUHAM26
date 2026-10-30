@@ -1,0 +1,86 @@
+// Stage A + B rules. Paste into Firebase console > Firestore Database > Rules > Publish.
+// NOT run against the Emulator Suite. Test with a citizen, an officer and an administrator.
+// Roles come from users/{uid}, which only an administrator can change.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function me() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function active() { return me().get('active', true) != false; }
+    function isAdmin() { return signedIn() && me().role == 'admin' && active(); }
+    function isOfficer() { return signedIn() && me().role == 'officer' && active(); }
+    function isStaff() { return isAdmin() || isOfficer(); }
+    function myDept() { return me().get('departmentId', '-'); }
+    function canServices() { return isAdmin() || (isOfficer() && me().get('servicesAllowed', false) == true); }
+
+    // ---- people -----------------------------------------------------------
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isStaff());
+      // Self-registration can only ever create a citizen.
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.role == 'citizen'
+        && request.resource.data.keys().hasOnly(['name', 'email', 'role', 'active', 'createdAt']);
+      allow create: if isAdmin();
+      // Edit your own profile, but never role, department, active flag or services access.
+      allow update: if signedIn() && request.auth.uid == uid
+        && !request.resource.data.diff(resource.data).affectedKeys()
+              .hasAny(['role', 'departmentId', 'active', 'servicesAllowed']);
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // ---- reports ----------------------------------------------------------
+    match /incidents/{id} {
+      allow read: if signedIn() && (
+        resource.data.reporter_id == request.auth.uid
+        || isAdmin()
+        || (isOfficer() && resource.data.department_id == myDept()));
+
+      allow create: if signedIn() && request.resource.data.reporter_id == request.auth.uid;
+      allow create: if isStaff();
+
+      // The reporter may only add feedback, history lines and supporters to their own report.
+      allow update: if signedIn()
+        && resource.data.reporter_id == request.auth.uid
+        && request.resource.data.reporter_id == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['feedback', 'history', 'supporters', 'people', 'updated_at']);
+      allow update: if isAdmin()
+        || (isOfficer() && resource.data.department_id == myDept());
+      allow delete: if false;
+    }
+
+    // Internal notes and resource requests: staff only.
+    match /incident_staff/{id} {
+      allow read, update: if isAdmin() || (isOfficer() && resource.data.department_id == myDept());
+      allow create: if isAdmin() || (isOfficer() && request.resource.data.department_id == myDept());
+      allow delete: if false;
+    }
+
+    // ---- notifications ----------------------------------------------------
+    match /notifications/{id} {
+      allow read: if signedIn() && resource.data.user_id == request.auth.uid;
+      allow create: if signedIn() && (request.resource.data.user_id == request.auth.uid || isStaff());
+      allow update: if signedIn() && (resource.data.user_id == request.auth.uid || isStaff());
+      allow delete: if false;
+    }
+
+    // ---- shared city information -----------------------------------------
+    match /city_updates/{id} {
+      allow read: if signedIn();
+      allow create, update: if isStaff();
+      allow delete: if false;
+    }
+
+    match /service_places/{id} {
+      allow read: if signedIn();
+      allow create, update: if canServices();
+      allow delete: if false;   // removal is a flag (removed = 1) so it reaches every phone
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

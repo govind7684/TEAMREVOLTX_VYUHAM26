@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CIVINEX AI | Report it. Route it. Resolve it.</title>
+<meta name="description" content="CIVINEX AI is a hackathon prototype for reporting public infrastructure faults in Kerala and tracking them from complaint to verified fix.">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta property="og:title" content="CIVINEX AI">
+<meta property="og:description" content="Report it. Route it. Resolve it. A smart-city infrastructure fault platform prototype for Kerala.">
+<meta property="og:image" content="assets/og-card.png">
+<meta property="og:type" content="website">
+<style>
+:root{--bg:#06121f;--panel:#0b1f33;--line:#1b3a56;--text:#f4f8fb;--muted:#a6b9cc;--cyan:#14d6c4;--blue:#0fa3b1;--violet:#2f80ed;--navy:#06121f}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--cyan)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:5;background:rgba(6,18,31,.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;gap:16px;height:60px}
+header img{height:40px;width:auto}
+header nav{margin-left:auto;display:flex;gap:18px;font-size:14px}
+header nav a{color:var(--muted);text-decoration:none}
+header nav a:hover,header nav a:focus-visible{color:var(--text)}
+.hero{padding:72px 0 56px;text-align:center;background:radial-gradient(60% 60% at 50% 0%,rgba(20,214,196,.25),transparent 70%),linear-gradient(180deg,rgba(6,18,31,.62),rgba(11,37,69,.94)),url(assets/campus.jpg) center/cover no-repeat;border-bottom:4px solid var(--blue)}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff;margin-bottom:18px}
+.eyebrow::before{content:"";width:34px;height:4px;background:var(--blue)}
+.hero img.logo{width:min(340px,70vw);height:auto}
+h1{font-size:clamp(28px,5vw,46px);line-height:1.1;margin:24px 0 12px;font-weight:900;letter-spacing:.01em;text-transform:uppercase}
+h1::before{content:"";display:block;width:56px;height:5px;background:var(--blue);margin:0 auto 18px}
+.grad{background:linear-gradient(90deg,var(--cyan),var(--blue),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--muted);max-width:640px;margin:0 auto 28px;font-size:18px}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-block;padding:12px 22px;border-radius:12px;font-weight:600;text-decoration:none;border:1px solid var(--line);color:var(--text);min-height:44px}
+.btn.primary{background:linear-gradient(90deg,var(--blue),var(--violet));border-color:transparent}
+.btn:focus-visible,a:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+.badge{display:inline-block;margin-top:28px;padding:6px 14px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:13px}
+section{padding:56px 0;border-top:1px solid var(--line)}
+h2{font-size:28px;margin:0 0 8px;font-weight:900;text-transform:uppercase;letter-spacing:.01em}
+.sub{color:var(--muted);margin:0 0 28px;max-width:680px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.card h3{margin:0 0 6px;font-size:17px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.steps li{counter-increment:s;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px 12px 52px;position:relative}
+.steps li::before{content:counter(s);position:absolute;left:14px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#0b0b0c;font-weight:700;font-size:13px;display:grid;place-items:center}
+.honest{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--cyan);border-radius:12px;padding:18px}
+.honest ul{margin:8px 0 0;padding-left:20px;color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:32px 0;color:var(--muted);font-size:14px;text-align:center}
+footer img{height:40px;margin-bottom:10px}
+@media (max-width:640px){header nav{display:none}.hero{padding-top:48px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a href="#top" aria-label="CIVINEX AI home"><img src="assets/logo_full.png" alt="CIVINEX AI"></a>
+    <nav aria-label="Sections"><a href="#features">Features</a><a href="#how">How it works</a><a href="#roles">Roles</a><a href="#honest">Honest status</a><a href="#get">Get the app</a></nav>
+  </div>
+</header>
+<main id="top">
+  <div class="hero"><div class="wrap">
+    <div class="eyebrow">Digital University Kerala · Vyuham 26 · Agent Forge</div><br>
+    <img class="logo" src="assets/logo_full.png" alt="CIVINEX AI logo">
+    <h1>Report it. Route it. <span class="grad">Resolve it.</span></h1>
+    <p class="lead">An Android app prototype that takes a citizen's report of a broken road, blocked drain or dead streetlight and follows it to a fix the citizen can verify.</p>
+    <div class="btns"><a class="btn primary" href="#get">Get the app</a><a class="btn" href="#how">See how it works</a></div>
+    <span class="badge">Built for Vyuham 26 · Agent Forge Hackathon · Digital University Kerala</span>
+  </div></div>
+
+  <section id="features"><div class="wrap">
+    <h2>What it does</h2>
+    <p class="sub">One shared incident database, with a view for every kind of city fault.</p>
+    <div class="grid">
+      <div class="card"><h3>Understands the complaint</h3><p>A small text model sorts the complaint into a category and shows how sure it is. Staff can always override it, and every override is logged.</p></div>
+      <div class="card"><h3>Spots duplicates</h3><p>Reports of the same problem are linked under one parent, so the city sees how many citizens are affected.</p></div>
+      <div class="card"><h3>Explains the priority</h3><p>Severity, safety risk, people affected, location, repeat reports and history each add points you can read.</p></div>
+      <div class="card"><h3>Routes to the right team</h3><p>Reports go to the department, then an officer who accepts or rejects with a reason. Overdue cases escalate.</p></div>
+      <div class="card"><h3>Maps and hotspots</h3><p>Pins, groups and a density heat view show where problems cluster and where they keep coming back.</p></div>
+      <div class="card"><h3>Closes the loop</h3><p>Before and after photos, then the citizen says whether it is really fixed. If not, the case reopens.</p></div>
+    </div>
+  </div></section>
+
+  <section id="how"><div class="wrap">
+    <h2>From complaint to verified fix</h2>
+    <p class="sub">Every report follows the same ten steps, with a timestamped history.</p>
+    <ol class="steps">
+      <li>Report submitted</li><li>AI analysis completed</li><li>Duplicate verification</li><li>Priority assigned</li><li>Department selected</li>
+      <li>Officer assigned</li><li>Work in progress</li><li>Resolution evidence uploaded</li><li>Citizen verification or feedback</li><li>Incident closed</li>
+    </ol>
+  </div></section>
+
+  <section id="roles"><div class="wrap">
+    <h2>Three roles</h2>
+    <div class="grid">
+      <div class="card"><h3>Citizen</h3><p>Report with a photo and GPS, track progress, see problems nearby and add "I see this too", give feedback.</p></div>
+      <div class="card"><h3>Municipal officer</h3><p>Work the assigned queue, watch deadlines, add internal notes, request resources, escalate.</p></div>
+      <div class="card"><h3>Administrator</h3><p>City overview, departments and officers, heat map, recurring faults, performance and CSV downloads.</p></div>
+    </div>
+  </div></section>
+
+  <section id="honest"><div class="wrap">
+    <h2>Honest status</h2>
+    <div class="honest">
+      <strong>This is a hackathon prototype, not an official product of the event or its host, and not an emergency service.</strong>
+      <ul>
+        <li>The text classifier is a small model trained on example complaints written for this project. Its percentage is its own estimate, not a measured accuracy.</li>
+        <li>Priority is an explainable scoring rule, not machine learning. Daily summaries and maintenance insights are statistics and templates, not AI predictions.</li>
+        <li>Photo analysis by a vision model is not included yet; a person confirms what a photo shows.</li>
+        <li>Data currently stays on each device. There is no shared city backend yet.</li>
+        <li>No live city sensors or feeds are connected.</li>
+      </ul>
+    </div>
+  </div></section>
+
+  <section id="get"><div class="wrap">
+    <h2>Get the app</h2>
+    <p class="sub">Build the Android APK from the source (see the setup guide), then host the file and link it here.</p>
+    <div class="btns" style="justify-content:flex-start">
+      <!-- Replace the two href values once you have a hosted APK and a repository. -->
+      <a class="btn primary" href="#" aria-disabled="true">Download APK (add link)</a>
+      <a class="btn" href="#" aria-disabled="true">Source code (add link)</a>
+    </div>
+  </div></section>
+</main>
+<footer><div class="wrap">
+  <img src="assets/mark.png" alt="">
+  <div>CIVINEX AI · One City. One Community. One Intelligent Future.</div>
+  <div>Built for Vyuham 26 · Agent Forge Hackathon · Digital University Kerala</div>
+</div></footer>
+</body>
+</html>

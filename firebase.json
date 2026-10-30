@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"civinex-ai","appId":"1:850481340615:android:cc4fc94a31ba43d0045ee2","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"civinex-ai","configurations":{"android":"1:850481340615:android:cc4fc94a31ba43d0045ee2","web":"1:850481340615:web:600ff0b3a3782b5c045ee2"}}}}}}

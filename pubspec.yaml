@@ -1,0 +1,74 @@
+name: civinex_ai
+description: "CIVINEX AI - smart city infrastructure fault reporting and resolution platform for Kerala, India."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # App dependencies
+  flutter_riverpod: ^2.5.1
+  sqflite: ^2.3.3
+  sqflite_common_ffi: ^2.3.3 # desktop (Windows/Linux/macOS) SQLite and tests
+  path: ^1.9.0
+  path_provider: ^2.1.3
+  uuid: ^4.4.0
+  crypto: ^3.0.3
+  intl: ^0.19.0
+  image_picker: ^1.1.2
+  flutter_map: ^7.0.2 # OpenStreetMap rendering
+  latlong2: ^0.9.1
+  geolocator: ^13.0.1 # GPS, permission-gated
+  http: ^1.2.2 # reverse geocoding (OpenStreetMap Nominatim)
+  local_auth: ^2.3.0 # fingerprint / face / device PIN for app lock and vault
+  flutter_secure_storage: ^9.2.2 # vault key in the Android Keystore
+  cryptography: ^2.7.0 # AES-256-GCM for vault files
+  file_picker: ^8.1.2 # choose PDF / image documents, save exports
+  open_filex: ^4.5.0 # open a decrypted PDF in the phone's viewer
+  firebase_core: ^3.6.0 # Firebase (free Spark plan)
+  firebase_auth: ^5.3.1 # email + password sign-in, reset, verification
+  cloud_firestore: ^5.4.4 # user profiles (name, role, department)
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.1 # launcher icons from assets/brand
+  flutter_native_splash: ^2.4.1 # native launch screen
+
+# Run once:
+#   dart run flutter_launcher_icons
+#   dart run flutter_native_splash:create
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: assets/brand/app_icon.png
+  adaptive_icon_background: "#040412"
+  adaptive_icon_foreground: assets/brand/app_icon_foreground.png
+  min_sdk_android: 24
+
+flutter_native_splash:
+  color: "#040412"
+  image: assets/brand/splash_mark.png
+  android_12:
+    color: "#040412"
+    image: assets/brand/splash_mark.png
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/brand/
+  fonts:
+    # Inter Display Black (SIL Open Font License) for headlines.
+    - family: Display
+      fonts:
+        - asset: assets/fonts/Display-Black.otf
+          weight: 900

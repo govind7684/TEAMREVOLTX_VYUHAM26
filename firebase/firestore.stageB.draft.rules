@@ -1,0 +1,103 @@
+// DRAFT. Not deployed, not tested. Test with the Firebase Emulator Suite first.
+// Free (Spark) plan version: roles are read from users/{uid}, which only an administrator can
+// change. (Custom claims would need a Cloud Function or Admin SDK.) Each rule check that reads
+// the role costs one extra document read.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function profile() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function role() { return profile().role; }
+    function isAdmin() { return signedIn() && role() == 'admin'; }
+    function isOfficer() { return signedIn() && role() == 'officer'; }
+    function myDept() { return profile().departmentId; }
+    function unchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      // Registration creates a citizen only; role cannot be chosen by the client.
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.role == 'citizen'
+        && request.resource.data.keys().hasOnly(['name', 'email', 'role', 'createdAt']);
+      allow update: if signedIn() && request.auth.uid == uid
+        && unchanged(['role', 'departmentId', 'active']);
+      allow delete: if false;
+    }
+
+    match /departments/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /officers/{uid} {
+      allow read: if isOfficer() || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /incidents/{id} {
+      allow read: if signedIn() && (
+        resource.data.reporterId == request.auth.uid ||
+        isAdmin() ||
+        (isOfficer() && resource.data.departmentId == myDept()));
+      // Citizens create a submitted report; priority, SLA, routing and AI
+      // fields are filled in by a Cloud Function, not trusted from the client.
+      allow create: if signedIn() && role() == 'citizen'
+        && request.resource.data.reporterId == request.auth.uid
+        && request.resource.data.status == 'submitted'
+        && request.resource.data.description is string
+        && request.resource.data.description.size() >= 10
+        && request.resource.data.description.size() <= 1000;
+      // Citizens may only withdraw their own submitted report.
+      allow update: if signedIn() && role() == 'citizen'
+        && resource.data.reporterId == request.auth.uid
+        && resource.data.status == 'submitted'
+        && request.resource.data.status == 'withdrawn'
+        && unchanged(['priority', 'priorityScore', 'slaDueAt', 'departmentId', 'assignedOfficerId', 'reporterId']);
+      // Staff updates go through callable Functions; direct writes are admin only.
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /duplicateGroups/{id} {
+      allow read: if isOfficer() || isAdmin();
+      allow write: if false; // Functions only
+    }
+
+    match /assignments/{id} {
+      allow read: if isAdmin() || (isOfficer() && resource.data.officerId == request.auth.uid);
+      allow write: if false; // Functions only (accept/reject are callables)
+    }
+
+    match /incidentHistory/{id} {
+      allow read: if signedIn();   // tighten with a per-incident lookup in production
+      allow create: if false;      // Functions only
+      allow update, delete: if false; // append-only
+    }
+
+    match /notifications/{id} {
+      allow read, update: if signedIn() && resource.data.userId == request.auth.uid
+        && unchanged(['userId', 'title', 'body', 'incidentId']);
+      allow create, delete: if false;
+    }
+
+    match /feedback/{incidentId} {
+      allow read: if isAdmin() || (isOfficer()) ||
+        (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn() && role() == 'citizen'
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1 && request.resource.data.rating <= 5
+        && get(/databases/$(database)/documents/incidents/$(incidentId)).data.reporterId == request.auth.uid
+        && get(/databases/$(database)/documents/incidents/$(incidentId)).data.status == 'resolved';
+      allow update, delete: if false;
+    }
+
+    match /analytics/{day} {
+      allow read: if isOfficer() || isAdmin();
+      allow write: if false; // scheduled Function
+    }
+  }
+}

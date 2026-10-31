@@ -61,7 +61,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
 
   @override
   void dispose() {
-    for (final c in [_desc, _loc, _lat, _lng, _people]) {
+    for (final c in [_desc, _loc, _lat, _lng, _people, _otherKind]) {
       c.dispose();
     }
     super.dispose();
@@ -84,6 +84,9 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
     }
   }
 
+  bool _photoShowsByAi = false;
+  final _otherKind = TextEditingController();
+
   Future<void> _askClaudeAboutPhoto() async {
     final path = _photoPath;
     if (path == null) return;
@@ -97,6 +100,11 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
           _photoClaude = r;
           // Fill in what the person has not chosen yet; they can change it.
           if (r.visible && _category == null) _category = r.category;
+          // The photo type is chosen from what the AI saw; the person can still change it.
+          if (r.visible) {
+            _photoShows = r.category;
+            _photoShowsByAi = true;
+          }
           if (r.visible && _desc.text.trim().isEmpty && r.summary.isNotEmpty) {
             _desc.text = r.summary;
             _descFromPhoto = true;
@@ -143,6 +151,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
         _capturedAt = capturedAt;
         _gpsAtCapture = false;
         _photoClaude = null;
+        _photoShowsByAi = false;
         _finding = finding;
         _photoShows = finding?.category;
       });
@@ -290,6 +299,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
             photoShows: _finding == null ? _photoShows : null,
             photoFinding: _finding != null && _photoShows == _finding!.category ? _finding : null,
             photoCheck: _photoPath == null ? null : _currentCheck(),
+            aiDepartmentId: _photoClaude?.departmentId ?? _claude?.departmentId,
           );
       ref.read(refreshTickProvider.notifier).state++;
       if (!mounted) return;
@@ -334,7 +344,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
 
   static const _groups = [
     _Group('Road & Transportation', 'Potholes, traffic, accessibility', Icons.directions_car_filled,
-        Color(0xFF14B8A6), [IncidentCategory.roadDamage, IncidentCategory.traffic, IncidentCategory.accessibility]),
+        Color(0xFFE5333D), [IncidentCategory.roadDamage, IncidentCategory.traffic, IncidentCategory.accessibility]),
     _Group('Water & Drainage', 'Leaks, flooding, drainage', Icons.water_drop,
         Color(0xFF3B82F6), [IncidentCategory.flooding, IncidentCategory.blockedDrain, IncidentCategory.waterLeak]),
     _Group('Electricity & Lighting', 'Street lights, power, electrical', Icons.bolt,
@@ -499,9 +509,12 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
         label: Text(_photoPath == null ? 'Take a photo of the problem' : 'Retake photo'),
       ),
       Row(children: [
-        TextButton(
-          onPressed: () => _addPhoto(camera: false),
-          child: const Text('Use a gallery photo instead (not verified as live)'),
+        Flexible(
+          child: TextButton(
+            onPressed: () => _addPhoto(camera: false),
+            child: const Text('Use a gallery photo instead (not verified as live)',
+                textAlign: TextAlign.start),
+          ),
         ),
         if (_photoPath != null)
           IconButton(
@@ -512,6 +525,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
               _capturedAt = null;
               _gpsAtCapture = false;
               _photoShows = null;
+              _photoShowsByAi = false;
               _finding = null;
               _photoClaude = null;
             }),
@@ -558,7 +572,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                         '${_photoClaude!.priority.label} priority',
                         style: const TextStyle(fontWeight: FontWeight.w700)),
                   if (_photoClaude!.visible)
-                    Text('Would go to: ${Departments.nameOf(_photoClaude!.category.departmentId)}'),
+                    Text('Would go to: ${Departments.nameOf(_photoClaude!.departmentId ?? _photoClaude!.category.departmentId)}'
+                        '${_photoClaude!.departmentId == null ? '' : ' (AI choice)'}'),
                   if (_photoClaude!.summary.isNotEmpty) Text(_photoClaude!.summary),
                   if (_photoClaude!.landmarks.isNotEmpty)
                     Text('Readable in photo: ${_photoClaude!.landmarks}',
@@ -583,15 +598,35 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
               'Please confirm or correct it below.',
               style: const TextStyle(fontSize: 12)),
         DropdownButtonFormField<IncidentCategory?>(
+          key: ValueKey('photo-shows-${_photoShows?.name}-$_photoShowsByAi'),
           initialValue: _photoShows,
-          decoration: const InputDecoration(labelText: 'What does the photo show?'),
+          decoration: InputDecoration(
+              labelText: 'What does the photo show?',
+              helperText: _photoShowsByAi
+                  ? 'Chosen by the AI from your photo. Change it if it is wrong.'
+                  : (_photoBusy ? 'The AI is looking at the photo...' : 'Pick one, or use General / other.')),
           items: [
-            const DropdownMenuItem(value: null, child: Text('Skip')),
+            const DropdownMenuItem(value: null, child: Text('Not chosen yet')),
             for (final e in supportedPhotoFaults.entries)
-              DropdownMenuItem(value: e.value, child: Text(e.key)),
+              DropdownMenuItem(
+                  value: e.value,
+                  child: Text(e.value == IncidentCategory.other ? 'General / other (type it below)' : e.key)),
           ],
-          onChanged: (v) => setState(() => _photoShows = v),
+          onChanged: (v) => setState(() {
+            _photoShows = v;
+            _photoShowsByAi = false;
+          }),
         ),
+        if (_photoShows == IncidentCategory.other) ...[
+          const SizedBox(height: 8),
+          TextField(
+            controller: _otherKind,
+            maxLength: 60,
+            decoration: const InputDecoration(
+                labelText: 'Name the problem (optional)',
+                hintText: 'For example: fallen tree, stray animals, broken bench'),
+          ),
+        ],
       ],
       const SizedBox(height: 4),
       Text(
@@ -602,6 +637,12 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
       const SizedBox(height: 16),
       GradientButton(
           onPressed: () {
+            final kind = _otherKind.text.trim();
+            if (_photoShows == IncidentCategory.other &&
+                kind.isNotEmpty &&
+                !_desc.text.toLowerCase().contains(kind.toLowerCase())) {
+              _desc.text = _desc.text.trim().isEmpty ? kind : '$kind. ${_desc.text.trim()}';
+            }
             if (_validateIssue()) _goTo(1);
           },
           label: 'Next'),
@@ -765,7 +806,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                   '${s.confidence == null ? '' : ' (${(s.confidence! * 100).round()}% model estimate)'}'),
               if (s.alternatives.isNotEmpty)
                 Text('Also possible: ${s.alternativesText}', style: const TextStyle(fontSize: 12)),
-              Text('Will be sent to: ${Departments.nameOf(s.category.departmentId)}'),
+              Text('Will be sent to: ${Departments.nameOf(_photoClaude?.departmentId ?? _claude?.departmentId ?? s.category.departmentId)}'
+                  '${(_photoClaude?.departmentId ?? _claude?.departmentId) == null ? '' : ' (AI choice; staff can reassign)'}'),
               const SizedBox(height: 4),
               Text(s.explanation, style: const TextStyle(fontSize: 12)),
               Text(

@@ -156,9 +156,7 @@ class ManageServicesScreen extends ConsumerWidget {
       ),
     );
     final values = (name.text, city.text, phone.text, address.text, hours.text);
-    for (final t in [name, city, phone, address, hours]) {
-      t.dispose();
-    }
+    disposeLater([name, city, phone, address, hours]);
     if (ok != true) return;
     try {
       await ref.read(servicePlacesRepositoryProvider).save(

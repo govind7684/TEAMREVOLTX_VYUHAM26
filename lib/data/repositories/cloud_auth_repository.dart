@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:sqflite/sqflite.dart';
 
 import '../../core/constants/enums.dart';
@@ -28,6 +29,9 @@ class CloudAuthRepository extends AuthRepository {
   int get _now => DateTime.now().millisecondsSinceEpoch;
 
   // ------------------------------------------------------------- mirroring
+
+  /// Plain-language note about how far the last sign-in got, shown under the form.
+  static String lastSignInStage = '';
 
   AppUser _fromProfile(String uid, Map<String, Object?> p) {
     final roleName = p['role'] as String?;
@@ -196,9 +200,16 @@ class CloudAuthRepository extends AuthRepository {
 
   @override
   Future<AppUser> signIn(String email, String password, {SignInAudience? audience}) async {
+    lastSignInStage = 'Firebase did not accept this email and password.';
     final uid = await _cloud.signIn(email, password);
+    lastSignInStage = 'Firebase accepted the password. Reading the profile for this account...';
+    debugPrint('CIVINEX signIn: Firebase accepted the password, uid=$uid');
     try {
       var profile = await _cloud.getProfile(uid);
+      lastSignInStage = profile == null
+          ? 'Firebase accepted the password, but there is NO profile document for uid $uid in Firestore users.'
+          : 'Firebase accepted the password. Profile found: role=${profile['role']}, active=${profile['active']}.';
+      debugPrint('CIVINEX signIn: profile ${profile == null ? 'NOT FOUND for this uid' : 'found: role=${profile['role']} (${profile['role'].runtimeType}), active=${profile['active']} (${profile['active'].runtimeType})'}');
       if (profile == null) {
         if (audience == SignInAudience.staff) {
           throw const PermissionDeniedException(

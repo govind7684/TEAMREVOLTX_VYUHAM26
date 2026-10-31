@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-/// Visual identity: deep navy and teal/cyan (the CIVINEX logo colours), clean
-/// cards, bold titles. Light and dark themes share the same structure.
+/// Visual identity: Vyuham '26 / Agent Forge look from the event material:
+/// near-black, white, crimson red, heavy bold titles. Light and dark themes share the same structure.
 class AppTheme {
-  /// Deepest navy: dark-theme background and hero panels.
-  static const ink = Color(0xFF06121F);
+  /// Near-black: dark-theme background and hero panels.
+  static const ink = Color(0xFF0E0E0E);
 
   /// Dark cards and sheets, one step above [ink].
-  static const inkSoft = Color(0xFF0B1F33);
+  static const inkSoft = Color(0xFF111111);
 
-  /// Brand navy.
-  static const navy = Color(0xFF0B2545);
+  /// Charcoal.
+  static const navy = Color(0xFF1C1C1E);
 
-  /// Bright teal/cyan: accent on dark backgrounds, filled buttons in dark mode.
-  static const accent = Color(0xFF14D6C4);
+  /// Bright crimson: accent on dark backgrounds, filled buttons in dark mode.
+  static const accent = Color(0xFFE5333D);
 
-  /// Darker teal with enough contrast for text and buttons on white.
-  static const accentDeep = Color(0xFF0A7F77);
+  /// Deeper crimson with enough contrast for text and buttons on white.
+  static const accentDeep = Color(0xFFC8141E);
 
   /// Red for critical items and errors only.
   static const alert = Color(0xFFE5484D);
@@ -53,18 +53,18 @@ class AppTheme {
     final scheme = base.copyWith(
       primary: primary,
       onPrimary: dark ? ink : Colors.white,
-      secondary: dark ? const Color(0xFF7FE9DF) : navy,
+      secondary: dark ? const Color(0xFFFF8A90) : navy,
       onSecondary: dark ? ink : Colors.white,
       tertiary: ember,
       error: dark ? const Color(0xFFFF6B70) : const Color(0xFFB3261E),
-      surface: dark ? ink : const Color(0xFFF6F9FC),
-      onSurface: dark ? Colors.white : const Color(0xFF0B1F33),
-      onSurfaceVariant: dark ? const Color(0xFFA6B9CC) : const Color(0xFF51657A),
+      surface: dark ? ink : const Color(0xFFFAFAFA),
+      onSurface: dark ? Colors.white : const Color(0xFF111111),
+      onSurfaceVariant: dark ? const Color(0xFFB8B8B8) : const Color(0xFF5A5A5A),
       surfaceContainerLowest: dark ? ink : Colors.white,
       surfaceContainerLow: dark ? inkSoft : Colors.white,
-      surfaceContainer: dark ? const Color(0xFF0E2740) : const Color(0xFFEDF3F8),
-      surfaceContainerHigh: dark ? const Color(0xFF123049) : const Color(0xFFE4ECF3),
-      outlineVariant: dark ? const Color(0xFF1B3A56) : const Color(0xFFD5E0EA),
+      surfaceContainer: dark ? const Color(0xFF1A1A1A) : const Color(0xFFF1F1F1),
+      surfaceContainerHigh: dark ? const Color(0xFF242424) : const Color(0xFFE7E7E7),
+      outlineVariant: dark ? const Color(0xFF343434) : const Color(0xFFDCDCDC),
       errorContainer: dark ? const Color(0xFF4A1519) : const Color(0xFFFFDAD9),
       onErrorContainer: dark ? const Color(0xFFFFDAD9) : const Color(0xFF410004),
     );
@@ -110,7 +110,7 @@ class AppTheme {
           backgroundColor: primary,
           foregroundColor: btnFg,
           disabledBackgroundColor: scheme.outlineVariant,
-          shape: StadiumBorder(),
+          shape: const StadiumBorder(),
           textStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 15),
           minimumSize: const Size(0, 48),
@@ -160,7 +160,7 @@ class AppTheme {
       ),
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
-          shape: WidgetStatePropertyAll(const StadiumBorder()),
+          shape: const WidgetStatePropertyAll(StadiumBorder()),
           side: WidgetStatePropertyAll(BorderSide(color: scheme.outlineVariant)),
           backgroundColor: WidgetStateProperty.resolveWith(
               (s) => s.contains(WidgetState.selected) ? primary : Colors.transparent),
@@ -169,7 +169,7 @@ class AppTheme {
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: dark ? const Color(0xFF081A2B) : Colors.white,
+        backgroundColor: dark ? const Color(0xFF141414) : Colors.white,
         surfaceTintColor: Colors.transparent,
         indicatorColor: primary.withValues(alpha: dark ? 0.18 : 0.14),
         iconTheme: WidgetStateProperty.resolveWith((s) => IconThemeData(
@@ -181,7 +181,7 @@ class AppTheme {
             )),
       ),
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: dark ? const Color(0xFF081A2B) : Colors.white,
+        backgroundColor: dark ? const Color(0xFF141414) : Colors.white,
         indicatorColor: primary.withValues(alpha: 0.18),
         selectedIconTheme: IconThemeData(color: primary),
       ),

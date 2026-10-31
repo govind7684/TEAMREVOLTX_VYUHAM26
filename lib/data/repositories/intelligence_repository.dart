@@ -41,12 +41,10 @@ class IntelSnapshot {
 /// Reads what staff are allowed to see and runs the pure analytics over it.
 class IntelligenceRepository {
   IntelligenceRepository(this._db,
-      {required IncidentRepository incidents,
-      required WorkflowRepository workflow,
+      {required this._incidents,
+      required this._workflow,
       DateTime Function()? clock})
-      : _incidents = incidents,
-        _workflow = workflow,
-        _now = clock ?? DateTime.now;
+      : _now = clock ?? DateTime.now;
 
   final Database _db;
   final IncidentRepository _incidents;

@@ -198,7 +198,7 @@ class _Classification extends ConsumerWidget {
       ),
     );
     final reasonText = reason.text;
-    reason.dispose();
+    disposeLater([reason]);
     if (ok != true || !context.mounted) return;
     await _guard(
       context,

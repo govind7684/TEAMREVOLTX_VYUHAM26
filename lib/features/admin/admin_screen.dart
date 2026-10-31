@@ -161,9 +161,9 @@ class _Users extends ConsumerWidget {
       ),
     );
     final n = name.text, e = email.text, p = password.text;
-    name.dispose();
-    email.dispose();
-    password.dispose();
+    disposeLater([name]);
+    disposeLater([email]);
+    disposeLater([password]);
     if (ok != true || !context.mounted) return;
     try {
       await ref.read(authRepositoryProvider).createStaff(
@@ -229,7 +229,7 @@ class _Users extends ConsumerWidget {
       ),
     );
     final pw = c.text;
-    c.dispose();
+    disposeLater([c]);
     if (ok != true) return;
     try {
       await ref
@@ -348,7 +348,7 @@ class _DepartmentsTab extends ConsumerWidget {
       ),
     );
     final t = c.text;
-    c.dispose();
+    disposeLater([c]);
     return ok == true ? t : null;
   }
 

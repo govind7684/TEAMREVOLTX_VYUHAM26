@@ -29,7 +29,7 @@ class AuthScaffold extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xFF041019), Color(0xFF0B2545), Color(0xFF0A4F5C)],
+                colors: [Color(0xFF0A0A0A), Color(0xFF1C1C1E), Color(0xFF5A0E13)],
               ),
             ),
             child: Stack(fit: StackFit.expand, children: [
@@ -70,10 +70,10 @@ class AuthScaffold extends StatelessWidget {
                         SizedBox(height: compact ? 18 : 28),
                         child,
                         const SizedBox(height: 20),
-                        Text(
+                        const Text(
                           Brand.eventLine,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 12, color: Colors.white70, height: 1.4),
+                          style: TextStyle(fontSize: 12, color: Colors.white70, height: 1.4),
                         ),
                       ]),
                     ),

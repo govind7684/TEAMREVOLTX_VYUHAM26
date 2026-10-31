@@ -42,12 +42,12 @@ class CreditsScreen extends ConsumerWidget {
               const SizedBox(height: 8),
               Text('How you earn points', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 4),
-              _Rule('Report a problem', '+${Credits.perReport}', 'up to ${Credits.dailyCap} reports a day'),
-              _Rule('Take the photo live with the camera', '+${Credits.liveBonus}', 'not for flagged photos'),
-              _Rule('The city takes it up', '+${Credits.acceptedBonus}', 'when staff assign or start work'),
-              _Rule('The problem is resolved', '+${Credits.resolvedBonus}', ''),
-              _Rule('Your report matches someone else’s and staff confirm it', '+${Credits.confirmedSame}', ''),
-              _Rule('Say whether the fix worked', '+${Credits.feedbackBonus}', 'in the report’s feedback'),
+              const _Rule('Report a problem', '+${Credits.perReport}', 'up to ${Credits.dailyCap} reports a day'),
+              const _Rule('Take the photo live with the camera', '+${Credits.liveBonus}', 'not for flagged photos'),
+              const _Rule('The city takes it up', '+${Credits.acceptedBonus}', 'when staff assign or start work'),
+              const _Rule('The problem is resolved', '+${Credits.resolvedBonus}', ''),
+              const _Rule('Your report matches someone else’s and staff confirm it', '+${Credits.confirmedSame}', ''),
+              const _Rule('Say whether the fix worked', '+${Credits.feedbackBonus}', 'in the report’s feedback'),
               const SizedBox(height: 4),
               Text(
                   'Rejected or withdrawn reports earn nothing. Points are counted from your own reports, '

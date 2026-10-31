@@ -98,3 +98,15 @@ String timeAgo(DateTime t, {DateTime? now}) {
   if (d.inDays < 7) return '${d.inDays} d ago';
   return DateFormat('d MMM').format(t);
 }
+
+/// Disposes text controllers after a dialog has finished closing. Disposing them
+/// the moment showDialog returns can happen while the dialog is still animating
+/// away, which crashes with "'_dependents.isEmpty' is not true".
+void disposeLater(Iterable<ChangeNotifier> items) {
+  final list = items.toList();
+  Future<void>.delayed(const Duration(milliseconds: 600), () {
+    for (final i in list) {
+      i.dispose();
+    }
+  });
+}

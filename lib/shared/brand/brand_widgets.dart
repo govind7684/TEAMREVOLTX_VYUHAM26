@@ -6,7 +6,7 @@ import '../../core/theme/app_theme.dart';
 const _heroGradient = LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
-  colors: [Color(0xFF041019), Color(0xFF0B2545), Color(0xFF0A5C63)],
+  colors: [Color(0xFF0A0A0A), Color(0xFF1C1C1E), Color(0xFF5A0E13)],
 );
 
 /// Short teal bar used as the recurring accent above headlines.
@@ -39,7 +39,7 @@ class BrandMark extends StatelessWidget {
             height: size,
             fit: BoxFit.contain,
             filterQuality: FilterQuality.medium,
-            errorBuilder: (_, __, ___) => Container(
+            errorBuilder: (_, _, _) => Container(
               width: size,
               height: size,
               decoration: BoxDecoration(
@@ -72,7 +72,7 @@ class BrandLogo extends StatelessWidget {
             width: width,
             fit: BoxFit.contain,
             filterQuality: FilterQuality.medium,
-            errorBuilder: (_, __, ___) => BrandMark(size: width / 3),
+            errorBuilder: (_, _, _) => BrandMark(size: width / 3),
           ),
         ),
       );
@@ -180,7 +180,7 @@ class CampusBackdrop extends StatelessWidget {
             'assets/brand/campus_bg.jpg',
             fit: BoxFit.cover,
             alignment: Alignment.center,
-            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+            errorBuilder: (_, _, _) => const SizedBox.shrink(),
           ),
           DecoratedBox(
             decoration: BoxDecoration(
@@ -271,7 +271,7 @@ class GradientButton extends StatelessWidget {
           height: 52,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(26),
-            gradient: const LinearGradient(colors: [Color(0xFF14E0C8), Color(0xFF12B7D4)]),
+            gradient: const LinearGradient(colors: [Color(0xFFE5333D), Color(0xFFC8141E)]),
             boxShadow: [BoxShadow(color: AppTheme.accent.withValues(alpha: 0.25), blurRadius: 14, offset: const Offset(0, 4))],
           ),
           child: InkWell(
@@ -305,7 +305,7 @@ class SplashScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF041019), Color(0xFF0B2545), Color(0xFF0A4F5C)],
+            colors: [Color(0xFF0A0A0A), Color(0xFF1C1C1E), Color(0xFF5A0E13)],
           ),
         ),
         child: Stack(fit: StackFit.expand, children: [
@@ -334,18 +334,18 @@ class SplashScreen extends StatelessWidget {
                 opacity: t,
                 child: Transform.translate(offset: Offset(0, 16 * (1 - t)), child: child),
               ),
-              child: Column(children: [
-                const Spacer(flex: 2),
-                const BrandLogo(width: 250),
-                const SizedBox(height: 16),
+              child: const Column(children: [
+                Spacer(flex: 2),
+                BrandLogo(width: 250),
+                SizedBox(height: 16),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  padding: EdgeInsets.symmetric(horizontal: 32),
                   child: Text(Brand.tagline,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.white, fontSize: 16, height: 1.35)),
+                      style: TextStyle(color: Colors.white, fontSize: 16, height: 1.35)),
                 ),
-                const Spacer(flex: 6),
-                const Padding(
+                Spacer(flex: 6),
+                Padding(
                   padding: EdgeInsets.fromLTRB(24, 0, 24, 28),
                   child: Text('Smarter Infrastructure.\nBetter Tomorrows.',
                       textAlign: TextAlign.center,

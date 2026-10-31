@@ -15,6 +15,7 @@ class AssistSuggestion {
     required this.priority,
     required this.summary,
     required this.reason,
+    this.departmentId,
     this.visible = true,
     this.landmarks = '',
     this.authenticity,
@@ -23,6 +24,9 @@ class AssistSuggestion {
   final IncidentCategory category;
   final Priority priority;
   final String summary, reason;
+
+  /// Department the model picked from the list the app sent; null if none.
+  final String? departmentId;
 
   /// False when the photo shows no clear civic fault.
   final bool visible;
@@ -97,6 +101,8 @@ class AssistService {
   }
 
   /// Returns the server's model name when it is reachable and configured.
+  static String? _dept(Object? v) => v is String && Departments.names.containsKey(v) ? v : null;
+
   Future<String> test() async {
     final r = await _call('GET', '/health');
     if (r['configured'] != true) {
@@ -106,7 +112,10 @@ class AssistService {
   }
 
   Future<AssistSuggestion> suggest(String description) async {
-    final r = await _call('POST', '/suggest', {'description': description});
+    final r = await _call('POST', '/suggest', {
+      'description': description,
+      'departments': Departments.names,
+    });
     final category = IncidentCategory.values.where((c) => c.name == r['category']).firstOrNull;
     final priority = Priority.values.where((p) => p.name == r['priority']).firstOrNull;
     if (category == null || priority == null) {
@@ -115,6 +124,7 @@ class AssistService {
     return AssistSuggestion(
       category: category,
       priority: priority,
+      departmentId: _dept(r['department']),
       summary: '${r['summary'] ?? ''}',
       reason: '${r['reason'] ?? ''}',
     );
@@ -136,7 +146,12 @@ class AssistService {
             ? 'image/webp'
             : 'image/jpeg';
     final r = await _call('POST', '/photo',
-        {'image': base64Encode(bytes), 'mediaType': media, 'description': description});
+        {
+          'image': base64Encode(bytes),
+          'mediaType': media,
+          'description': description,
+          'departments': Departments.names,
+        });
     final category = IncidentCategory.values.where((c) => c.name == r['category']).firstOrNull;
     final priority = Priority.values.where((p) => p.name == r['priority']).firstOrNull;
     if (category == null || priority == null) {
@@ -145,6 +160,7 @@ class AssistService {
     return AssistSuggestion(
       category: category,
       priority: priority,
+      departmentId: _dept(r['department']),
       summary: '${r['summary'] ?? ''}',
       reason: '${r['reason'] ?? ''}',
       visible: r['visible'] == true,

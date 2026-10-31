@@ -26,7 +26,7 @@ void main() {
     final client = MockClient((req) async {
       seen = req;
       return http.Response(
-          jsonEncode({'category': 'roadDamage', 'priority': 'high', 'summary': 's', 'reason': 'r'}), 200);
+          jsonEncode({'category': 'roadDamage', 'priority': 'high', 'department': 'dept_roads', 'summary': 's', 'reason': 'r'}), 200);
     });
     final prefs = prefsWith('http://192.168.1.2:8787/');
     await prefs.set(AssistService.tokenKey, 'pw');
@@ -35,7 +35,18 @@ void main() {
     expect(r.priority, Priority.high);
     expect(seen.url.toString(), 'http://192.168.1.2:8787/suggest');
     expect(seen.headers['X-Assist-Token'], 'pw');
-    expect(jsonDecode(seen.body), {'description': 'big pothole near bus stand'});
+    expect(r.departmentId, Departments.roads);
+    final body = jsonDecode(seen.body) as Map<String, dynamic>;
+    expect(body['description'], 'big pothole near bus stand');
+    expect((body['departments'] as Map).keys, contains(Departments.roads));
+  });
+
+  test('ignores a department the app does not know', () async {
+    final client = MockClient((_) async => http.Response(
+        jsonEncode({'category': 'waste', 'priority': 'low', 'department': 'dept_made_up', 'summary': 's', 'reason': 'r'}),
+        200));
+    final r = await AssistService(prefsWith('http://h:1'), client: client).suggest('rubbish pile on road');
+    expect(r.departmentId, isNull);
   });
 
   test('rejects an unknown category and shows server errors', () async {

@@ -48,7 +48,7 @@ class SettingsScreen extends ConsumerWidget {
         ),
         if (ref.watch(cloudIdentityProvider) != null) _EmailVerifyTile(),
         const SizedBox(height: 16),
-        Text('AI assistant (Claude)', style: Theme.of(context).textTheme.titleMedium),
+        Text('AI assistant (Claude or Gemini)', style: Theme.of(context).textTheme.titleMedium),
         ListTile(
           contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.auto_awesome_outlined),
@@ -111,8 +111,8 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
     final u = url.text, t = token.text;
-    url.dispose();
-    token.dispose();
+    disposeLater([url]);
+    disposeLater([token]);
     if (action == null || action == 'cancel') return;
     if (action == 'clear') {
       await svc.configure(null, null);
@@ -177,8 +177,8 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
     final cur = current.text, nw = next.text;
-    current.dispose();
-    next.dispose();
+    disposeLater([current]);
+    disposeLater([next]);
     if (ok != true || !context.mounted) return;
     try {
       await ref.read(authRepositoryProvider).changePassword(

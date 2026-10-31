@@ -261,7 +261,7 @@ class _StaffActionsState extends ConsumerState<_StaffActions> {
       ),
     );
     if (ok != true) {
-      reason.dispose();
+      disposeLater([reason]);
       return;
     }
     try {
@@ -277,7 +277,7 @@ class _StaffActionsState extends ConsumerState<_StaffActions> {
     } catch (e) {
       if (mounted) showMessage(this.context, friendlyError(e), error: true);
     } finally {
-      reason.dispose();
+      disposeLater([reason]);
     }
   }
 }

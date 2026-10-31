@@ -31,3 +31,10 @@ python app.py
 ```
 
 /health shows which provider is active. Free-tier data may be used by Google to improve its products, so only use test photos and test text; do not send real citizens' data. Free limits are low, so expect "Too many requests" if you hammer it.
+
+## Check which AI is used (works with any Claude model)
+
+`python check_ai.py` lists the models your key can use, or tests the one you set.
+With Claude: set `ANTHROPIC_API_KEY` only, run `python check_ai.py`, copy a model name it prints into
+`ANTHROPIC_MODEL`, run it again to see "Claude OK", then start `python app.py`.
+The server sends only a plain message with a system prompt, so any current Claude model works.

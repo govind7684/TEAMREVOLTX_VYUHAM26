@@ -275,8 +275,8 @@ class _UnlockState extends ConsumerState<_Unlock> {
       ),
     );
     final password = pw.text, newPin = pin.text;
-    pw.dispose();
-    pin.dispose();
+    disposeLater([pw]);
+    disposeLater([pin]);
     if (ok != true || !mounted) return;
     try {
       await ref.read(vaultRepositoryProvider).resetPin(ref.read(sessionProvider)!, password, newPin);
@@ -453,7 +453,7 @@ class _DocTile extends StatelessWidget {
         title: Text(doc.title, maxLines: 1, overflow: TextOverflow.ellipsis),
         subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('${doc.category.label} · ${doc.sizeText}'),
-          if (badge != null) badge,
+          ?badge,
         ]),
         isThreeLine: badge != null,
         trailing: const Icon(Icons.chevron_right),
@@ -617,7 +617,7 @@ class _DocScreenState extends ConsumerState<_DocScreen> {
       ),
     );
     final name = c.text;
-    c.dispose();
+    disposeLater([c]);
     if (ok != true) return;
     await _run(() => ref.read(vaultRepositoryProvider).rename(ref.read(sessionProvider)!, d.id, name));
   }

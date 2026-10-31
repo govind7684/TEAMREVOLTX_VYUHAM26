@@ -50,16 +50,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final primary = scheme.primary;
 
     return ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 16), children: [
-      HeroBox(
+      const HeroBox(
         scrim: 0.3,
         radius: 20,
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child: SizedBox(
           height: 150,
           child: Column(mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('Smarter Infrastructure\nStronger Communities',
-                style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800, height: 1.2)),
-            const SizedBox(height: 6),
+                style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800, height: 1.2)),
+            SizedBox(height: 6),
             Text('Report  ·  Track  ·  Resolve',
                 style: TextStyle(color: AppTheme.accent, fontWeight: FontWeight.w600)),
           ]),

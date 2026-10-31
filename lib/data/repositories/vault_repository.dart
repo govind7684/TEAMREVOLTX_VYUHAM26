@@ -16,10 +16,7 @@ import 'auth_repository.dart';
 /// get no special access. Files are encrypted before they touch the disk.
 class VaultRepository {
   VaultRepository(this._db,
-      {required VaultCrypto crypto, required String baseDir, required AuthRepository auth})
-      : _crypto = crypto,
-        _baseDir = baseDir,
-        _auth = auth;
+      {required this._crypto, required this._baseDir, required this._auth});
 
   final Database _db;
   final VaultCrypto _crypto;

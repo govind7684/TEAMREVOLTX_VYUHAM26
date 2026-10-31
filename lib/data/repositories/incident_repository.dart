@@ -138,6 +138,7 @@ class IncidentRepository {
     IncidentCategory? photoShows,
     ImageFinding? photoFinding,
     PhotoCheck? photoCheck,
+    String? aiDepartmentId,
   }) async {
     final errors = Validators.report(
       description: description,
@@ -200,7 +201,10 @@ class IncidentRepository {
     final id = 'CVX-${now.year}-${_uuid.v4().substring(0, 6).toUpperCase()}';
     final isDemoUser = reporter.isDemo;
     final ts = now.millisecondsSinceEpoch;
-    final deptId = parent?.departmentId ?? suggestion.category.departmentId;
+    final deptId = parent?.departmentId ??
+        (aiDepartmentId != null && Departments.names.containsKey(aiDepartmentId)
+            ? aiDepartmentId
+            : suggestion.category.departmentId);
     final due = parent?.slaDueAt ?? Sla.due(now, priority);
 
     String? imgLabel;

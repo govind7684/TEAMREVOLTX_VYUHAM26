@@ -17,9 +17,8 @@ import 'incident_repository.dart';
 /// department management. Sits on the same database as [IncidentRepository]
 /// and re-checks permissions on every call.
 class WorkflowRepository {
-  WorkflowRepository(this._db, {required IncidentRepository incidents, DateTime Function()? clock})
-      : _incidents = incidents,
-        _now = clock ?? DateTime.now;
+  WorkflowRepository(this._db, {required this._incidents, DateTime Function()? clock})
+      : _now = clock ?? DateTime.now;
 
   final Database _db;
   final IncidentRepository _incidents;
@@ -535,7 +534,7 @@ class WorkflowRepository {
       SELECT r.*, u.name AS who, i.department_id AS dept FROM resource_requests r
       JOIN users u ON u.id = r.requested_by JOIN incidents i ON i.id = r.incident_id
       ${incidentId == null ? '' : 'WHERE r.incident_id = ?'}
-      ORDER BY r.created_at DESC''', [if (incidentId != null) incidentId]);
+      ORDER BY r.created_at DESC''', [?incidentId]);
     return rows
         .where((r) => actor.role == UserRole.admin || r['dept'] == actor.departmentId)
         .map((r) => ResourceRequest(

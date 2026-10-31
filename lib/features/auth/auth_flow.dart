@@ -5,6 +5,7 @@ import '../../core/constants/brand.dart';
 import '../../core/errors/app_exceptions.dart';
 import '../../core/utils/validators.dart';
 import '../../data/repositories/auth_repository.dart';
+import '../../data/repositories/cloud_auth_repository.dart';
 import '../../shared/brand/brand_widgets.dart';
 import '../../shared/widgets/common.dart';
 import '../../state/providers.dart';
@@ -271,7 +272,7 @@ Future<void> _emailReset(BuildContext context, WidgetRef ref, String email) asyn
     ),
   );
   final addr = c.text;
-  c.dispose();
+  disposeLater([c]);
   if (send != true) return;
   try {
     await ref.read(authRepositoryProvider).sendPasswordReset(addr);
@@ -317,6 +318,7 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _busy = false;
+  bool _failed = false;
 
   @override
   void dispose() {
@@ -327,12 +329,18 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
 
   Future<void> _submit() async {
     if (!_form.currentState!.validate()) return;
-    setState(() => _busy = true);
+    setState(() {
+      _busy = true;
+      _failed = false;
+    });
     try {
       await ref.read(sessionProvider.notifier).signIn(_email.text, _password.text,
           audience: widget.admin ? SignInAudience.staff : SignInAudience.citizen);
     } catch (e) {
-      if (mounted) showMessage(context, friendlyError(e), error: true);
+      if (mounted) {
+        setState(() => _failed = true);
+        showMessage(context, friendlyError(e), error: true);
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -384,6 +392,23 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
             busy: _busy,
             label: 'Sign in',
           ),
+          const SizedBox(height: 8),
+          Text(
+            ref.watch(cloudIdentityProvider) != null
+                ? 'Accounts: cloud (Firebase) is connected.'
+                : 'Accounts: Firebase is NOT connected. Accounts exist only on this phone.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
+          ),
+          if (_failed && CloudAuthRepository.lastSignInStage.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text(
+                'Last step: ${CloudAuthRepository.lastSignInStage}',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
+              ),
+            ),
           const SizedBox(height: 4),
           if (!admin)
             TextButton(

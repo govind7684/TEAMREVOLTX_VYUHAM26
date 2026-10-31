@@ -376,7 +376,7 @@ final syncProvider = Provider<SyncService?>((ref) {
     }
     svc.pushSoon();
   });
-  ref.listen<int>(refreshTickProvider, (_, __) => svc.pushSoon());
+  ref.listen<int>(refreshTickProvider, (_, _) => svc.pushSoon());
   ref.onDispose(() {
     disposed = true;
     svc.stop();
@@ -405,7 +405,7 @@ final routingProvider = Provider<void>((ref) {
     }
   }
 
-  ref.listen<int>(refreshTickProvider, (_, __) => run());
+  ref.listen<int>(refreshTickProvider, (_, _) => run());
   Future.microtask(run);
   ref.onDispose(() => disposed = true);
 });

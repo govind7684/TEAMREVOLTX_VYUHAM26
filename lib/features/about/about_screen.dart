@@ -28,11 +28,11 @@ class AboutScreen extends StatelessWidget {
                 style: t.headlineMedium?.copyWith(
                     color: Colors.white, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
             const SizedBox(height: 4),
-            Text(Brand.tagline, style: const TextStyle(color: Colors.white70)),
+            const Text(Brand.tagline, style: TextStyle(color: Colors.white70)),
             const SizedBox(height: 16),
             const EventBadge(onDark: true),
             const SizedBox(height: 8),
-            Text(Brand.eventLine, style: const TextStyle(color: Colors.white60, fontSize: 12)),
+            const Text(Brand.eventLine, style: TextStyle(color: Colors.white60, fontSize: 12)),
           ]),
         ),
         const SizedBox(height: 20),

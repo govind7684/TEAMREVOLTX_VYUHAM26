@@ -19,14 +19,11 @@ import 'incident_repository.dart';
 class RoadRepository {
   RoadRepository(
     this._db, {
-    required IncidentRepository incidents,
-    RoadClassifier classifier = const RoadClassifier(),
-    DuplicateDetector detector = const DuplicateDetector(),
+    required this._incidents,
+    this._classifier = const RoadClassifier(),
+    this._detector = const DuplicateDetector(),
     DateTime Function()? clock,
-  })  : _incidents = incidents,
-        _classifier = classifier,
-        _detector = detector,
-        _now = clock ?? DateTime.now;
+  })  : _now = clock ?? DateTime.now;
 
   final Database _db;
   final IncidentRepository _incidents;

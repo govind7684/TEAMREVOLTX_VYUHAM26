@@ -526,7 +526,7 @@ class _StaffPanelState extends ConsumerState<_StaffPanel> {
       ),
     );
     final text = c.text;
-    c.dispose();
+    disposeLater([c]);
     return ok == true ? text : null;
   }
 

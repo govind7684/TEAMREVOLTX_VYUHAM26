@@ -84,9 +84,9 @@ class GeocodingService {
       final area = pick(['neighbourhood', 'suburb', 'quarter', 'hamlet']);
       final city = pick(['city', 'town', 'village', 'municipality', 'county']);
       final parts = <String>[
-        if (road != null) road,
-        if (area != null) area,
-        if (city != null) city,
+        ?road,
+        ?area,
+        ?city,
       ];
       final seen = <String>{};
       final unique = parts.where(seen.add).toList();

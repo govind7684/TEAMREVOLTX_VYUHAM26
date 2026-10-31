@@ -234,9 +234,9 @@ class _StaffControls extends ConsumerWidget {
     final stationText = station.text;
     final rainText = rain.text.trim();
     final levelText = level.text.trim();
-    station.dispose();
-    rain.dispose();
-    level.dispose();
+    disposeLater([station]);
+    disposeLater([rain]);
+    disposeLater([level]);
     if (ok != true || !context.mounted) return;
 
     final rainValue = double.tryParse(rainText);
@@ -292,9 +292,7 @@ class _StaffControls extends ConsumerWidget {
       ),
     );
     final v = fields.values.map((c) => c.text.trim()).toList();
-    for (final c in fields.values) {
-      c.dispose();
-    }
+    disposeLater(fields.values.toList());
     if (ok != true || !context.mounted) return;
 
     final nums = v.map(double.tryParse).toList();
